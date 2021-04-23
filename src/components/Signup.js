@@ -1,11 +1,16 @@
 import { Formik, Form } from "formik";
 import React from "react";
+import { useState, useEffect } from "react";
 import { TextField } from "./TextField";
 import * as Yup from "yup";
 import { Card } from "./Card";
+import axios from "axios";
 
 export const Signup = () => {
   //regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
+  const [isPending, setIsPending] = useState(true);
+
+  useEffect(() => {}, []);
 
   const validate = Yup.object({
     name: Yup.string()
@@ -30,14 +35,35 @@ export const Signup = () => {
     <Card>
       <Formik
         initialValues={{
-          name: "",
-          email: "",
-          password: "",
-          confirmPassword: "",
+          name: "Person A",
+          email: "bb@cc.com",
+          password: "abcd3fgh",
+          confirmPassword: "abcd3fgh",
         }}
         validationSchema={validate}
         onSubmit={(values) => {
           console.log(values);
+          setIsPending(false);
+          setTimeout(() => {
+            axios({
+              method: "post",
+              url: `https://5k9okv4iu0.execute-api.ap-southeast-1.amazonaws.com/production/register`,
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+              },
+              data: {
+                name: "Person C",
+                email: "bbc@cc.com",
+                password: "abcd3fgh",
+              },
+            }).then((response) => {
+              // this.setState({ data: response.data });
+              // console.log(this.state.data);
+              console.log(response);
+              setIsPending(true);
+            });
+          }, 1000);
         }}
       >
         {(formik) => (
@@ -52,12 +78,20 @@ export const Signup = () => {
                 name="confirmPassword"
                 type="text"
               />
-              <button className="btn btn-dark mt-3" type="submit">
-                Register
-              </button>
-              <button className="btn btn-danger mt-3 ml-3" type="reset">
-                Reset
-              </button>
+              {isPending && (
+                <button className="btn btn-dark mt-3" type="submit">
+                  Register
+                </button>
+              )}
+              {!isPending && (
+                <button className="btn btn-dark mt-3">Loading</button>
+              )}
+
+              {isPending && (
+                <button className="btn btn-danger mt-3 ml-3" type="reset">
+                  Reset
+                </button>
+              )}
             </Form>
           </div>
         )}

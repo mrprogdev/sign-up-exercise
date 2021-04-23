@@ -51,21 +51,30 @@ export default class PersonList extends React.Component {
     };
 
     axios({
-      method: "post",
-      url: `https://5k9okv4iu0.execute-api.ap-southeast-1.amazonaws.com/production/login`,
+      method: "get",
+      url: `https://5k9okv4iu0.execute-api.ap-southeast-1.amazonaws.com/production/users`,
       headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Origin: "http://localhost:3000",
-      },
-      data: {
-        email: "bb@cc.com",
-        password: "abcd3fgh",
+        Authorization: "Bearer f40g0493mjg09ug8u3409g",
       },
     }).then((response) => {
-      this.setState({ data: response.data });
-      console.log(this.state.data);
+      console.log(response);
     });
+
+    // axios({
+    //   method: "post",
+    //   url: `https://5k9okv4iu0.execute-api.ap-southeast-1.amazonaws.com/production/login`,
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     Accept: "application/json",
+    //   },
+    //   data: {
+    //     email: "bb@cc.com",
+    //     password: "abcd3fgh",
+    //   },
+    // }).then((response) => {
+    //   this.setState({ data: response.data });
+    //   console.log(this.state.data);
+    // });
 
     //     axios.post(
     //         `https://5k9okv4iu0.execute-api.ap-southeast-1.amazonaws.com/production/register`,
@@ -105,8 +114,10 @@ export default class PersonList extends React.Component {
   };
 
   getUser = async () => {
-    let res = await api.post(`/users`, {
-      Authorization: "Bearer f40g0493mjg09ug8u3409g",
+    let res = await api.get(`/users`, {
+      headers: {
+        Authorization: "Bearer f40g0493mjg09ug8u3409g",
+      },
     });
     console.log(res);
   };
