@@ -6,12 +6,20 @@ import { useState, useEffect } from "react";
 import { Card } from "./Card";
 import axios from "axios";
 import { useHistory, useParams } from "react-router-dom";
+import Cookies from "js-cookie";
+import { useSelector, useDispatch } from "react-redux";
 
-const Login = () => {
+const Login = (props) => {
   const [isPending, setIsPending] = useState(true);
   const [isError, setIsError] = useState(false);
   const history = useHistory();
-  const [isData, setData] = useState([]);
+  const dispatch = useDispatch();
+
+  console.log("hey you are" + props.setIsLoggedIn);
+
+  const handleReomveCookie = () => {
+    Cookies.remove("token");
+  };
 
   const validate = Yup.object({
     email: Yup.string().email("Email is invalid").required("Required"),
@@ -35,37 +43,32 @@ const Login = () => {
         validationSchema={validate}
         onSubmit={(values) => {
           setIsPending(false);
+          setIsError(false);
           console.log(values);
-          setTimeout(() => {
-            //set timeout to see loading button take effect
-            axios({
-              method: "post",
-              url: `https://5k9okv4iu0.execute-api.ap-southeast-1.amazonaws.com/production/login`,
-              headers: {},
-              data: values,
-            })
-              .then((response) => {
-                // this.setState({ data: response.data });
-                // console.log(this.state.data);
-                //console.log(response.data);
-                console.log(response.data.data.session);
-                localStorage.setItem("token", response.data.data.session);
-                //setData(response);
-                //console.log(isData);
-                setIsError(false);
-                setIsPending(true);
-                console.log(response);
-                history.push({
-                  pathname: "/",
-                  //state: { detail: response.data },
-                });
-              })
-              .catch((error) => {
-                setIsError(true);
-                setIsPending(true);
-                console.log(error);
+          //set timeout to see loading button take effect
+          axios({
+            method: "post",
+            url: `https://5k9okv4iu0.execute-api.ap-southeast-1.amazonaws.com/production/login`,
+            headers: {},
+            data: values,
+          })
+            .then((response) => {
+              console.log(response.data.data.session);
+              localStorage.setItem("token", response.data.data.session);
+              setIsPending(true);
+              console.log(response);
+              props.setIsLoggedIn(true);
+              Cookies.set("token", "xyz", { expires: 1 });
+              dispatch({ type: "login" });
+              history.push({
+                pathname: "/",
               });
-          }, 100);
+            })
+            .catch((error) => {
+              setIsError(true);
+              setIsPending(true);
+              console.log(error);
+            });
         }}
       >
         {(formik) => (
@@ -83,6 +86,12 @@ const Login = () => {
               {!isPending && (
                 <button className="btn btn-dark mt-3">Signing In...</button>
               )}
+              <button
+                className="btn btn-dark mt-3"
+                onClick={handleReomveCookie}
+              >
+                Remove Cookie
+              </button>
             </Form>
           </div>
         )}
