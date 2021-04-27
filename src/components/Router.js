@@ -16,34 +16,23 @@ const publicRoutes = [
 const authRoutes = [{ path: "/", exact: true, component: UserTable }];
 
 const Router = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  //const isLogin = useSelector((state) => state.checkSession); // Redux
-
-  useEffect(() => {
-    // Will run on initial render or any dependencies inside array
-    console.log(isLoggedIn);
-    console.log(localStorage.getItem("token"));
-    console.log();
-    //if (localStorage.getItem("token") !== null) setIsLoggedIn(true);
-    if (Cookies.get("token") === "xyz") setIsLoggedIn(true);
-  });
+  const isLogin = useSelector((state) => state.checkSession); // Returns true or false
 
   return (
     <BrowserRouter>
       <Switch>
-        {!isLoggedIn &&
+        {!isLogin &&
           publicRoutes.map((eachRoutes) => {
             if (eachRoutes.path === "/login") {
               return (
                 <Route path={eachRoutes.path} exact={eachRoutes.exact}>
-                  <Login setIsLoggedIn={setIsLoggedIn} />
+                  <Login />
                 </Route>
               );
             }
             return <Route {...eachRoutes} />;
           })}
-        {isLoggedIn &&
-          authRoutes.map((eachRoutes) => <Route {...eachRoutes} />)}
+        {isLogin && authRoutes.map((eachRoutes) => <Route {...eachRoutes} />)}
 
         <Route component={NotFound} />
       </Switch>

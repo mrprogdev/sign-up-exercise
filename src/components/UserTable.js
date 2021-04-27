@@ -3,10 +3,13 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useHistory, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import Button from "./UI/Button";
 
 const UserTable = () => {
   const [userList, setUserList] = useState([]);
   const history = useHistory();
+  const token = useSelector((state) => state.token);
   const dispatch = useDispatch();
 
   const handleLogOut = () => {
@@ -19,10 +22,10 @@ const UserTable = () => {
   useEffect(() => {
     // Will run on initial render or any dependencies inside array
 
-    const AuthStr = "Bearer " + localStorage.getItem("token");
+    const AuthStr = "Bearer " + token;
     axios
       .get(
-        `https://5k9okv4iu0.execute-api.ap-southeast-1.amazonaws.com/production/users`,
+        `https://5k9okv4iu0.execute-api.ap-southeast-1.amazonaws.com/production/account`,
         { headers: { Authorization: AuthStr } }
       )
       .then((response) => {
@@ -55,7 +58,8 @@ const UserTable = () => {
           ))}
         </tbody>
       </table>
-      <button onClick={handleLogOut}>Log out</button>
+      <br />
+      <Button onClick={handleLogOut}>Log out</Button>
     </div>
   );
 };

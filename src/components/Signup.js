@@ -7,6 +7,7 @@ import { Card } from "./Card";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import Button from "./UI/Button";
 
 export const Signup = () => {
   //regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
@@ -86,14 +87,9 @@ export const Signup = () => {
                 name="confirmPassword"
                 type="text"
               />
-              {isPending && (
-                <button className="btn btn-dark mt-3" type="submit">
-                  Register
-                </button>
-              )}
-              {!isPending && (
-                <button className="btn btn-dark mt-3">Loading</button>
-              )}
+              <Button isLoading={!isPending} type="submit">
+                Register
+              </Button>
 
               {isPending && (
                 <button className="btn btn-danger mt-3 ml-3" type="reset">

@@ -5,21 +5,17 @@ import { TextField } from "./TextField";
 import { useState, useEffect } from "react";
 import { Card } from "./Card";
 import axios from "axios";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useParams, Redirect } from "react-router-dom";
 import Cookies from "js-cookie";
 import { useSelector, useDispatch } from "react-redux";
+import Button from "./UI/Button";
 
-const Login = (props) => {
+const Login = () => {
   const [isPending, setIsPending] = useState(true);
   const [isError, setIsError] = useState(false);
   const history = useHistory();
   const dispatch = useDispatch();
-
-  console.log("hey you are" + props.setIsLoggedIn);
-
-  const handleReomveCookie = () => {
-    Cookies.remove("token");
-  };
+  const isLogin = useSelector((state) => state.checkSession);
 
   const validate = Yup.object({
     email: Yup.string().email("Email is invalid").required("Required"),
@@ -32,6 +28,8 @@ const Login = (props) => {
       )
       .required("password is required"),
   });
+
+  if (isLogin) return <Redirect to="/" />;
 
   return (
     <Card>
@@ -57,8 +55,8 @@ const Login = (props) => {
               localStorage.setItem("token", response.data.data.session);
               setIsPending(true);
               console.log(response);
-              props.setIsLoggedIn(true);
-              Cookies.set("token", "xyz", { expires: 1 });
+
+              Cookies.set("token", response.data.data.session, { expires: 1 });
               dispatch({ type: "login" });
               history.push({
                 pathname: "/",
@@ -78,20 +76,7 @@ const Login = (props) => {
               {isError && <p>Username or password is wrong!</p>}
               <TextField label="Email" name="email" type="text" />
               <TextField label="Password" name="password" type="text" />
-              {isPending && (
-                <button className="btn btn-dark mt-3" type="submit">
-                  Sign In
-                </button>
-              )}
-              {!isPending && (
-                <button className="btn btn-dark mt-3">Signing In...</button>
-              )}
-              <button
-                className="btn btn-dark mt-3"
-                onClick={handleReomveCookie}
-              >
-                Remove Cookie
-              </button>
+              <Button isLoading={!isPending}>Sign In</Button>
             </Form>
           </div>
         )}
