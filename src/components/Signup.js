@@ -1,25 +1,16 @@
 import { Formik, Form } from "formik";
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { TextField } from "./TextField";
 import * as Yup from "yup";
 import { Card } from "./Card";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
 import Button from "./UI/Button";
 
 export const Signup = () => {
   //regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
   const [isPending, setIsPending] = useState(true);
-  // const isLogin = useSelector((state) => state.token); // Redux
-  // const isLoginTrue = useSelector((state) => state.checkSession); // Redux
-
-  useEffect(() => {
-    // console.log("this is login" + isLogin); // Redux
-    // console.log("this is login" + JSON.stringify({ isLogin })); // Redux
-    // console.log("this is login" + JSON.stringify({ isLoginTrue })); // Redux
-  }, []);
 
   const validate = Yup.object({
     name: Yup.string()
@@ -67,9 +58,6 @@ export const Signup = () => {
                 password: "abcd3fgh",
               },
             }).then((response) => {
-              // this.setState({ data: response.data });
-              // console.log(this.state.data);
-              console.log(response);
               setIsPending(true);
             });
           }, 100);

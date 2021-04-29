@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import NotFound from "../pages/NotFound";
-import Home from "./Home";
 import UserTable from "./UserTable";
 import Login from "./Login";
 import { Signup } from "./Signup";
 import { useSelector } from "react-redux";
-import Cookies from "js-cookie";
 
 const publicRoutes = [
-  { path: "/", exact: true, component: Home },
+  { path: "/", exact: true, component: Signup },
   { path: "/login", exact: true, component: Login },
 ];
 
-const authRoutes = [{ path: "/", exact: true, component: UserTable }];
+const authRoutes = [
+  { path: "/", exact: true, component: UserTable },
+  { path: "/login", exact: true, component: Login },
+];
 
 const Router = () => {
   const isLogin = useSelector((state) => state.checkSession); // Returns true or false

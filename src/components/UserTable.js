@@ -13,8 +13,6 @@ const UserTable = () => {
   const dispatch = useDispatch();
 
   const handleLogOut = () => {
-    localStorage.removeItem("token");
-    Cookies.remove("token");
     dispatch({ type: "logout" });
     history.push("/login");
   };
@@ -23,9 +21,10 @@ const UserTable = () => {
     // Will run on initial render or any dependencies inside array
 
     const AuthStr = "Bearer " + token;
+
     axios
       .get(
-        `https://5k9okv4iu0.execute-api.ap-southeast-1.amazonaws.com/production/account`,
+        `https://5k9okv4iu0.execute-api.ap-southeast-1.amazonaws.com/production/users`,
         { headers: { Authorization: AuthStr } }
       )
       .then((response) => {

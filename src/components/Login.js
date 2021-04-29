@@ -2,17 +2,17 @@ import React from "react";
 import * as Yup from "yup";
 import { Formik, Form } from "formik";
 import { TextField } from "./TextField";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card } from "./Card";
 import axios from "axios";
-import { useHistory, useParams, Redirect } from "react-router-dom";
+import { useHistory, Redirect } from "react-router-dom";
 import Cookies from "js-cookie";
 import { useSelector, useDispatch } from "react-redux";
 import Button from "./UI/Button";
 
 const Login = () => {
-  const [isPending, setIsPending] = useState(true);
-  const [isError, setIsError] = useState(false);
+  const [isPending, setIsPending] = useState(true); // for loading message on button when fetching data from API
+  const [isError, setIsError] = useState(false); // for message error if login unsuccessful
   const history = useHistory();
   const dispatch = useDispatch();
   const isLogin = useSelector((state) => state.checkSession);
@@ -42,8 +42,6 @@ const Login = () => {
         onSubmit={(values) => {
           setIsPending(false);
           setIsError(false);
-          console.log(values);
-          //set timeout to see loading button take effect
           axios({
             method: "post",
             url: `https://5k9okv4iu0.execute-api.ap-southeast-1.amazonaws.com/production/login`,
@@ -51,13 +49,8 @@ const Login = () => {
             data: values,
           })
             .then((response) => {
-              console.log(response.data.data.session);
-              localStorage.setItem("token", response.data.data.session);
               setIsPending(true);
-              console.log(response);
-
-              Cookies.set("token", response.data.data.session, { expires: 1 });
-              dispatch({ type: "login" });
+              dispatch({ type: "login", payload: response.data.data.session });
               history.push({
                 pathname: "/",
               });
