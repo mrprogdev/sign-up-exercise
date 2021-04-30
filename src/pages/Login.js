@@ -14,16 +14,14 @@ const Login = () => {
   const [isError, setIsError] = useState(false); // for message error if login unsuccessful
   const [isErrorMessage, setIsErrorMessage] = useState(""); // for message error if login unsuccessful
   const history = useHistory();
+  const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{7,}$/;
 
   const validate = Yup.object({
     email: Yup.string().email("Email is invalid").required("Required"),
     password: Yup.string()
       .min(8, "Password must be atleast 8 characters")
       .max(30, " Must be less than 30 characters or less")
-      .matches(
-        /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
-        "Must have atleast 1 alphabet and atleast 1 number"
-      )
+      .matches(regex, "Must have atleast 1 alphabet and atleast 1 number")
       .required("password is required"),
   });
 
@@ -64,7 +62,9 @@ const Login = () => {
               {isError && <p>{isErrorMessage}</p>}
               <TextField label="Email" name="email" type="text" />
               <TextField label="Password" name="password" type="text" />
-              <Button isLoading={!isPending}>Sign In</Button>
+              <Button className="btn-dark mt-3" isLoading={!isPending}>
+                Sign In
+              </Button>
             </Form>
           </div>
         )}
