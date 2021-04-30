@@ -2,7 +2,7 @@ import React from "react";
 
 const Button = ({ isLoading, className, children, ...props }) => {
   return (
-    <button className="btn btn-dark mt-3" {...props}>
+    <button className={"btn " + className} {...props}>
       {isLoading ? "loading..." : children}
     </button>
   );

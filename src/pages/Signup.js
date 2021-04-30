@@ -15,6 +15,7 @@ export const Signup = (props) => {
   const [isError, setIsError] = useState(false); // for message error if login unsuccessful
   const [isErrorMessage, setIsErrorMessage] = useState(""); // for message error if login unsuccessful
   const history = useHistory();
+  const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{7,}$/;
 
   const HandleLogOut = () => {
     Cookies.remove("token");
@@ -30,10 +31,7 @@ export const Signup = (props) => {
     password: Yup.string()
       .min(8, "Password must be atleast 8 characters")
       .max(30, " Must be less than 30 characters or less")
-      .matches(
-        /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
-        "Must have atleast one letter and atleast one number"
-      )
+      .matches(regex, "Must have atleast one letter and atleast one number")
       .required("password is required"),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password"), null], "password must match")
@@ -44,7 +42,9 @@ export const Signup = (props) => {
     return (
       <div>
         <h1>Hellow World</h1>
-        <button onClick={HandleLogOut}>Log Out</button>
+        <Button className="btn-dark mt-3" onClick={HandleLogOut}>
+          Log Out
+        </Button>
       </div>
     );
   }
@@ -100,14 +100,18 @@ export const Signup = (props) => {
                 name="confirmPassword"
                 type="text"
               />
-              <Button isLoading={!isPending} type="submit">
+              <Button
+                className="btn-dark mt-3"
+                isLoading={!isPending}
+                type="submit"
+              >
                 Register
               </Button>
 
               {isPending && (
-                <button className="btn btn-danger mt-3 ml-3" type="reset">
+                <Button className="btn-danger mt-3 ml-3" type="reset">
                   Reset
-                </button>
+                </Button>
               )}
             </Form>
           </div>
