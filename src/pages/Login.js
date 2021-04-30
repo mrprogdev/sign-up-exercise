@@ -1,21 +1,19 @@
 import React from "react";
 import * as Yup from "yup";
 import { Formik, Form } from "formik";
-import { TextField } from "./TextField";
+import { TextField } from "../components/UI/TextField";
 import { useState } from "react";
-import { Card } from "./Card";
+import { Card } from "../components/UI/Card";
 import axios from "axios";
-import { useHistory, Redirect } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import Cookies from "js-cookie";
-import { useSelector, useDispatch } from "react-redux";
-import Button from "./UI/Button";
+import Button from "../components/UI/Button";
 
 const Login = () => {
   const [isPending, setIsPending] = useState(true); // for loading message on button when fetching data from API
   const [isError, setIsError] = useState(false); // for message error if login unsuccessful
+  const [isErrorMessage, setIsErrorMessage] = useState(""); // for message error if login unsuccessful
   const history = useHistory();
-  const dispatch = useDispatch();
-  const isLogin = useSelector((state) => state.checkSession);
 
   const validate = Yup.object({
     email: Yup.string().email("Email is invalid").required("Required"),
@@ -24,12 +22,10 @@ const Login = () => {
       .max(30, " Must be less than 30 characters or less")
       .matches(
         /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
-        "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character"
+        "Must have atleast 1 alphabet and atleast 1 number"
       )
       .required("password is required"),
   });
-
-  if (isLogin) return <Redirect to="/" />;
 
   return (
     <Card>
@@ -50,14 +46,13 @@ const Login = () => {
           })
             .then((response) => {
               setIsPending(true);
-              dispatch({ type: "login", payload: response.data.data.session });
-              history.push({
-                pathname: "/",
-              });
+              Cookies.set("token", "xyz");
+              history.push("/");
             })
             .catch((error) => {
               setIsError(true);
               setIsPending(true);
+              setIsErrorMessage(error.message);
               console.log(error);
             });
         }}
@@ -66,7 +61,7 @@ const Login = () => {
           <div>
             <h1 className="my-4 font-weight-bold .display-4">Login</h1>
             <Form>
-              {isError && <p>Username or password is wrong!</p>}
+              {isError && <p>{isErrorMessage}</p>}
               <TextField label="Email" name="email" type="text" />
               <TextField label="Password" name="password" type="text" />
               <Button isLoading={!isPending}>Sign In</Button>

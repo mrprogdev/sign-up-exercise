@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import { useHistory, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import Button from "./UI/Button";
+import Button from "../components/UI/Button";
 
 const UserTable = () => {
   const [userList, setUserList] = useState([]);

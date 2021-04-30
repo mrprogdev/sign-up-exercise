@@ -1,16 +1,25 @@
 import { Formik, Form } from "formik";
 import React from "react";
 import { useState } from "react";
-import { TextField } from "./TextField";
+import { TextField } from "../components/UI/TextField";
 import * as Yup from "yup";
-import { Card } from "./Card";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import Button from "./UI/Button";
+import { Card } from "../components/UI/Card";
+import Button from "../components/UI/Button";
+import Cookies from "js-cookie";
+import { useHistory, Redirect } from "react-router-dom";
 
-export const Signup = () => {
-  //regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
+export const Signup = (props) => {
   const [isPending, setIsPending] = useState(true);
+  const [isError, setIsError] = useState(false); // for message error if login unsuccessful
+  const [isErrorMessage, setIsErrorMessage] = useState(""); // for message error if login unsuccessful
+  const history = useHistory();
+
+  const HandleLogOut = () => {
+    Cookies.remove("token");
+    history.push("/login");
+  };
 
   const validate = Yup.object({
     name: Yup.string()
@@ -23,13 +32,22 @@ export const Signup = () => {
       .max(30, " Must be less than 30 characters or less")
       .matches(
         /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
-        "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character"
+        "Must have atleast one letter and atleast one number"
       )
       .required("password is required"),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password"), null], "password must match")
       .required("Confirm password is required"),
   });
+
+  if (props.isLoggedIn === true) {
+    return (
+      <div>
+        <h1>Hellow World</h1>
+        <button onClick={HandleLogOut}>Log Out</button>
+      </div>
+    );
+  }
 
   return (
     <Card>
@@ -44,28 +62,35 @@ export const Signup = () => {
         onSubmit={(values) => {
           console.log(values);
           setIsPending(false);
-          setTimeout(() => {
-            axios({
-              method: "post",
-              url: `https://5k9okv4iu0.execute-api.ap-southeast-1.amazonaws.com/production/register`,
-              headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-              },
-              data: {
-                name: "Person C",
-                email: "bbc@cc.com",
-                password: "abcd3fgh",
-              },
-            }).then((response) => {
+
+          axios({
+            method: "post",
+            url: `https://5k9okv4iu0.execute-api.ap-southeast-1.amazonaws.com/production/register`,
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            data: {
+              name: "Person C",
+              email: "bbc@cc.com",
+              password: "abcd3fgh",
+            },
+          })
+            .then((response) => {
               setIsPending(true);
+            })
+            .catch((error) => {
+              setIsError(true);
+              setIsPending(true);
+              setIsErrorMessage(error.message);
+              console.log(error);
             });
-          }, 100);
         }}
       >
         {(formik) => (
           <div>
             <h1 className="my-4 font-weight-bold .display-4">Sign Up</h1>
+            {isError && <p>{isErrorMessage}</p>}
             <Form>
               <TextField label="Name" name="name" type="text" />
               <TextField label="Email" name="email" type="text" />
