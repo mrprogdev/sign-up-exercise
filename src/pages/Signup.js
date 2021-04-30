@@ -8,7 +8,8 @@ import { Link } from "react-router-dom";
 import { Card } from "../components/UI/Card";
 import Button from "../components/UI/Button";
 import Cookies from "js-cookie";
-import { useHistory, Redirect } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import { userAuth } from "../components/axios";
 
 export const Signup = (props) => {
   const [isPending, setIsPending] = useState(true);
@@ -62,28 +63,15 @@ export const Signup = (props) => {
         onSubmit={(values) => {
           console.log(values);
           setIsPending(false);
-
-          axios({
-            method: "post",
-            url: `https://5k9okv4iu0.execute-api.ap-southeast-1.amazonaws.com/production/register`,
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-            data: {
-              name: "Person C",
-              email: "bbc@cc.com",
-              password: "abcd3fgh",
-            },
-          })
+          userAuth
+            .post("/register", values)
             .then((response) => {
               setIsPending(true);
             })
             .catch((error) => {
               setIsError(true);
               setIsPending(true);
-              setIsErrorMessage(error.message);
-              console.log(error);
+              setIsErrorMessage(error.response.data.error);
             });
         }}
       >
@@ -100,13 +88,20 @@ export const Signup = (props) => {
                 name="confirmPassword"
                 type="text"
               />
-              <Button
-                className="btn-dark mt-3"
-                isLoading={!isPending}
-                type="submit"
-              >
-                Register
-              </Button>
+
+              {isPending ? (
+                <Button
+                  className="btn-dark mt-3"
+                  isLoading={!isPending}
+                  type="submit"
+                >
+                  Register
+                </Button>
+              ) : (
+                <div class="spinner-border" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+              )}
 
               {isPending && (
                 <Button className="btn-danger mt-3 ml-3" type="reset">

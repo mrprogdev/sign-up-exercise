@@ -4,10 +4,10 @@ import { Formik, Form } from "formik";
 import { TextField } from "../components/UI/TextField";
 import { useState } from "react";
 import { Card } from "../components/UI/Card";
-import axios from "axios";
 import { Redirect, useHistory } from "react-router-dom";
 import Cookies from "js-cookie";
 import Button from "../components/UI/Button";
+import { userAuth } from "../components/axios";
 
 const Login = () => {
   const [isPending, setIsPending] = useState(true); // for loading message on button when fetching data from API
@@ -36,12 +36,8 @@ const Login = () => {
         onSubmit={(values) => {
           setIsPending(false);
           setIsError(false);
-          axios({
-            method: "post",
-            url: `https://5k9okv4iu0.execute-api.ap-southeast-1.amazonaws.com/production/login`,
-            headers: {},
-            data: values,
-          })
+          userAuth
+            .post("/login", values)
             .then((response) => {
               setIsPending(true);
               Cookies.set("token", "xyz");
@@ -50,8 +46,7 @@ const Login = () => {
             .catch((error) => {
               setIsError(true);
               setIsPending(true);
-              setIsErrorMessage(error.message);
-              console.log(error);
+              setIsErrorMessage(error.response.data.error);
             });
         }}
       >
@@ -62,9 +57,19 @@ const Login = () => {
               {isError && <p>{isErrorMessage}</p>}
               <TextField label="Email" name="email" type="text" />
               <TextField label="Password" name="password" type="text" />
-              <Button className="btn-dark mt-3" isLoading={!isPending}>
-                Sign In
-              </Button>
+              {isPending ? (
+                <Button
+                  className="btn-dark mt-3"
+                  isLoading={!isPending}
+                  type="submit"
+                >
+                  Sign In
+                </Button>
+              ) : (
+                <div class="spinner-border" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+              )}
             </Form>
           </div>
         )}
