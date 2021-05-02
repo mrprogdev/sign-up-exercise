@@ -4,10 +4,10 @@ import { Formik, Form } from "formik";
 import { TextField } from "../components/UI/TextField";
 import { useState } from "react";
 import { Card } from "../components/UI/Card";
-import { Redirect, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import Cookies from "js-cookie";
 import Button from "../components/UI/Button";
-import { userAuth } from "../components/axios";
+import { userAuth } from "../common/axios";
 
 const Login = () => {
   const [isPending, setIsPending] = useState(true); // for loading message on button when fetching data from API
@@ -57,19 +57,14 @@ const Login = () => {
               {isError && <p>{isErrorMessage}</p>}
               <TextField label="Email" name="email" type="text" />
               <TextField label="Password" name="password" type="text" />
-              {isPending ? (
-                <Button
-                  className="btn-dark mt-3"
-                  isLoading={!isPending}
-                  type="submit"
-                >
-                  Sign In
-                </Button>
-              ) : (
-                <div class="spinner-border" role="status">
-                  <span class="sr-only">Loading...</span>
-                </div>
-              )}
+
+              <Button
+                className="btn-dark mt-3"
+                isLoading={!isPending}
+                type="submit"
+              >
+                Sign In
+              </Button>
             </Form>
           </div>
         )}

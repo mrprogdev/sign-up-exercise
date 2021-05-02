@@ -1,15 +1,14 @@
 import { Formik, Form } from "formik";
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TextField } from "../components/UI/TextField";
 import * as Yup from "yup";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import { Card } from "../components/UI/Card";
 import Button from "../components/UI/Button";
 import Cookies from "js-cookie";
 import { useHistory } from "react-router-dom";
-import { userAuth } from "../components/axios";
+import { userAuth } from "../common/axios";
 
 export const Signup = (props) => {
   const [isPending, setIsPending] = useState(true);
@@ -17,6 +16,11 @@ export const Signup = (props) => {
   const [isErrorMessage, setIsErrorMessage] = useState(""); // for message error if login unsuccessful
   const history = useHistory();
   const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{7,}$/;
+
+  useEffect(() => {
+    // Will run on initial render or any dependencies inside array
+    console.log(Cookies.get("token"));
+  }, []);
 
   const HandleLogOut = () => {
     Cookies.remove("token");
@@ -39,7 +43,7 @@ export const Signup = (props) => {
       .required("Confirm password is required"),
   });
 
-  if (props.isLoggedIn === true) {
+  if (props.isLoggedIn) {
     return (
       <div>
         <h1>Hellow World</h1>
@@ -89,19 +93,13 @@ export const Signup = (props) => {
                 type="text"
               />
 
-              {isPending ? (
-                <Button
-                  className="btn-dark mt-3"
-                  isLoading={!isPending}
-                  type="submit"
-                >
-                  Register
-                </Button>
-              ) : (
-                <div class="spinner-border" role="status">
-                  <span class="sr-only">Loading...</span>
-                </div>
-              )}
+              <Button
+                className="btn-dark mt-3"
+                isLoading={!isPending}
+                type="submit"
+              >
+                Register
+              </Button>
 
               {isPending && (
                 <Button className="btn-danger mt-3 ml-3" type="reset">

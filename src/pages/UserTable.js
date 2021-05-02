@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import Cookies from "js-cookie";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import Button from "../components/UI/Button";
+import { userAuth } from "../components/axios";
 
 const UserTable = () => {
   const [userList, setUserList] = useState([]);
@@ -19,14 +19,10 @@ const UserTable = () => {
 
   useEffect(() => {
     // Will run on initial render or any dependencies inside array
-
     const AuthStr = "Bearer " + token;
 
-    axios
-      .get(
-        `https://5k9okv4iu0.execute-api.ap-southeast-1.amazonaws.com/production/users`,
-        { headers: { Authorization: AuthStr } }
-      )
+    userAuth
+      .get("/users", values)
       .then((response) => {
         setUserList(response.data.data);
         console.log(response);
