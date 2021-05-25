@@ -8,7 +8,7 @@ import { Card } from "../components/UI/Card";
 import Button from "../components/UI/Button";
 import Cookies from "js-cookie";
 import { useHistory } from "react-router-dom";
-import { userAuth } from "../common/axios";
+import api from "../common/axios";
 
 export const Signup = (props) => {
   const [isPending, setIsPending] = useState(true);
@@ -67,7 +67,8 @@ export const Signup = (props) => {
         onSubmit={(values) => {
           console.log(values);
           setIsPending(false);
-          userAuth
+          setIsError(false);
+          api
             .post("/register", values)
             .then((response) => {
               setIsPending(true);
@@ -82,7 +83,7 @@ export const Signup = (props) => {
         {(formik) => (
           <div>
             <h1 className="my-4 font-weight-bold .display-4">Sign Up</h1>
-            {isError && <p>{isErrorMessage}</p>}
+            {isError && <p className="text-danger">{isErrorMessage}</p>}
             <Form>
               <TextField label="Name" name="name" type="text" />
               <TextField label="Email" name="email" type="text" />

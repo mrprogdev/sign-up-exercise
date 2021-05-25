@@ -6,15 +6,15 @@ import { useState } from "react";
 import { Card } from "../components/UI/Card";
 import { useHistory } from "react-router-dom";
 import Cookies from "js-cookie";
-import Button from "../components/UI/Button";
-import { userAuth } from "../common/axios";
+import { PrimaryButton } from "../components/UI/Button";
+import { useDispatch, useSelector } from "react-redux";
+import { userLogin } from "../redux/action";
 
 const Login = () => {
-  const [isPending, setIsPending] = useState(true); // for loading message on button when fetching data from API
-  const [isError, setIsError] = useState(false); // for message error if login unsuccessful
-  const [isErrorMessage, setIsErrorMessage] = useState(""); // for message error if login unsuccessful
-  const history = useHistory();
   const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{7,}$/;
+  const dispatch = useDispatch();
+  const errMessage = useSelector((state) => state.auth.error);
+  const loading = useSelector((state) => state.auth.loading);
 
   const validate = Yup.object({
     email: Yup.string().email("Email is invalid").required("Required"),
@@ -34,37 +34,24 @@ const Login = () => {
         }}
         validationSchema={validate}
         onSubmit={(values) => {
-          setIsPending(false);
-          setIsError(false);
-          userAuth
-            .post("/login", values)
-            .then((response) => {
-              setIsPending(true);
-              Cookies.set("token", "xyz");
-              history.push("/");
-            })
-            .catch((error) => {
-              setIsError(true);
-              setIsPending(true);
-              setIsErrorMessage(error.response.data.error);
-            });
+          dispatch(userLogin(values));
         }}
       >
         {(formik) => (
           <div>
             <h1 className="my-4 font-weight-bold .display-4">Login</h1>
             <Form>
-              {isError && <p>{isErrorMessage}</p>}
               <TextField label="Email" name="email" type="text" />
               <TextField label="Password" name="password" type="text" />
-
-              <Button
+              <p className="text-danger">{errMessage}</p>
+              {/* {isError && <p className="text-danger">{errMessage}</p>} */}
+              <PrimaryButton
                 className="btn-dark mt-3"
-                isLoading={!isPending}
+                isLoading={loading}
                 type="submit"
               >
                 Sign In
-              </Button>
+              </PrimaryButton>
             </Form>
           </div>
         )}
