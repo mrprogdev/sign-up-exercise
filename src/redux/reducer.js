@@ -1,4 +1,9 @@
-import { USER_SIGNIN, USER_SIGNIN_FAILURE, USER_SIGNIN_SUCCESS } from "./type";
+import {
+  USER_SIGNIN,
+  USER_SIGNIN_FAILURE,
+  USER_SIGNIN_SUCCESS,
+  USER_SIGNOUT,
+} from "./type";
 
 const initialState = {
   loading: false,
@@ -15,7 +20,13 @@ const authReducer = (state = initialState, action) => {
         loading: true,
         error: null,
       };
-      break;
+    case USER_SIGNOUT:
+      return {
+        loading: false,
+        is_logged_in: false,
+        access_token: null,
+        error: null,
+      };
     case USER_SIGNIN_SUCCESS:
       return {
         ...state,

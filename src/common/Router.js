@@ -3,7 +3,9 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import NotFound from "../pages/NotFound";
 import Login from "../pages/Login";
 import { Signup } from "../pages/Signup";
+import UserTable from "../pages/UserTable";
 import Cookies from "js-cookie";
+import { useDispatch, useSelector } from "react-redux";
 
 const publicRoutes = [
   { id: 1, path: "/", exact: true, component: Signup },
@@ -11,21 +13,17 @@ const publicRoutes = [
 ];
 
 const authRoutes = [
-  { id: 1, path: "/", exact: true, component: Signup },
+  { id: 1, path: "/", exact: true, component: UserTable },
   { id: 2, path: "/login", exact: true, component: Login },
 ];
 
 const Router = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    if (Cookies.get("token") === "xyz") setIsLoggedIn(true);
-  }, []);
+  const loggedin = useSelector((state) => state.auth.is_logged_in);
 
   return (
     <BrowserRouter>
       <Switch>
-        {!isLoggedIn &&
+        {!loggedin &&
           publicRoutes.map((eachRoutes) => {
             if (eachRoutes.path === "/login") {
               return (
@@ -40,7 +38,7 @@ const Router = () => {
             }
             return <Route key={eachRoutes.id} {...eachRoutes} />;
           })}
-        {isLoggedIn &&
+        {loggedin &&
           authRoutes.map((eachRoutes) => {
             if (eachRoutes.path === "/") {
               return (
@@ -49,7 +47,7 @@ const Router = () => {
                   path={eachRoutes.path}
                   exact={eachRoutes.exact}
                 >
-                  <Signup isLoggedIn={isLoggedIn} />
+                  <Signup isLoggedIn={loggedin} />
                 </Route>
               );
             }

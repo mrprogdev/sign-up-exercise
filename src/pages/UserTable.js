@@ -3,26 +3,29 @@ import axios from "axios";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import Button from "../components/UI/Button";
-import { userAuth } from "../components/axios";
+import { PrimaryButton } from "../components/UI/Button";
+import api from "../common/axios";
+import { userSignOut } from "../redux/action";
+import Cookies from "js-cookie";
 
 const UserTable = () => {
   const [userList, setUserList] = useState([]);
   const history = useHistory();
-  const token = useSelector((state) => state.token);
+  const token = useSelector((state) => state.auth.access_token);
   const dispatch = useDispatch();
+  console.log("Your Token: ", token);
 
   const handleLogOut = () => {
-    dispatch({ type: "logout" });
-    history.push("/login");
+    Cookies.remove("sessionid");
+    dispatch(userSignOut());
   };
 
   useEffect(() => {
     // Will run on initial render or any dependencies inside array
-    const AuthStr = "Bearer " + token;
 
-    userAuth
-      .get("/users", values)
+    const AuthStr = "Bearer " + token;
+    api
+      .get(`/users`, { headers: { Authorization: AuthStr } })
       .then((response) => {
         setUserList(response.data.data);
         console.log(response);
@@ -54,7 +57,7 @@ const UserTable = () => {
         </tbody>
       </table>
       <br />
-      <Button onClick={handleLogOut}>Log out</Button>
+      <PrimaryButton onClick={handleLogOut}>Log out</PrimaryButton>
     </div>
   );
 };

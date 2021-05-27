@@ -2,7 +2,7 @@ import React from "react";
 import * as Yup from "yup";
 import { Formik, Form } from "formik";
 import { TextField } from "../components/UI/TextField";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "../components/UI/Card";
 import { useHistory } from "react-router-dom";
 import Cookies from "js-cookie";
@@ -15,6 +15,8 @@ const Login = () => {
   const dispatch = useDispatch();
   const errMessage = useSelector((state) => state.auth.error);
   const loading = useSelector((state) => state.auth.loading);
+  const loggedin = useSelector((state) => state.auth.is_logged_in);
+  const history = useHistory();
 
   const validate = Yup.object({
     email: Yup.string().email("Email is invalid").required("Required"),
@@ -34,7 +36,11 @@ const Login = () => {
         }}
         validationSchema={validate}
         onSubmit={(values) => {
-          dispatch(userLogin(values));
+          dispatch(userLogin(values)).then((response) => {
+            if (response) {
+              history.push("/");
+            }
+          });
         }}
       >
         {(formik) => (

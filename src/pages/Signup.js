@@ -9,6 +9,9 @@ import Button from "../components/UI/Button";
 import Cookies from "js-cookie";
 import { useHistory } from "react-router-dom";
 import api from "../common/axios";
+import UserTable from "./UserTable";
+import { checkSesssion } from "../redux/action";
+import { useDispatch, useSelector } from "react-redux";
 
 export const Signup = (props) => {
   const [isPending, setIsPending] = useState(true);
@@ -16,10 +19,12 @@ export const Signup = (props) => {
   const [isErrorMessage, setIsErrorMessage] = useState(""); // for message error if login unsuccessful
   const history = useHistory();
   const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{7,}$/;
+  const dispatch = useDispatch();
 
   useEffect(() => {
     // Will run on initial render or any dependencies inside array
-    console.log(Cookies.get("token"));
+    console.log(Cookies.get("sessionid"));
+    dispatch(checkSesssion(Cookies.get("sessionid")));
   }, []);
 
   const HandleLogOut = () => {
@@ -46,10 +51,7 @@ export const Signup = (props) => {
   if (props.isLoggedIn) {
     return (
       <div>
-        <h1>Hellow World</h1>
-        <Button className="btn-dark mt-3" onClick={HandleLogOut}>
-          Log Out
-        </Button>
+        <UserTable />
       </div>
     );
   }
