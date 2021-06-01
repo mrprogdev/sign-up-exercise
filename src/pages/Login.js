@@ -2,10 +2,9 @@ import React from "react";
 import * as Yup from "yup";
 import { Formik, Form } from "formik";
 import { TextField } from "../components/UI/TextField";
-import { useState, useEffect } from "react";
 import { Card } from "../components/UI/Card";
 import { useHistory } from "react-router-dom";
-import Cookies from "js-cookie";
+import { Link } from "react-router-dom";
 import { PrimaryButton } from "../components/UI/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { userLogin } from "../redux/action";
@@ -14,8 +13,7 @@ const Login = () => {
   const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{7,}$/;
   const dispatch = useDispatch();
   const errMessage = useSelector((state) => state.auth.error);
-  const loading = useSelector((state) => state.auth.loading);
-  const loggedin = useSelector((state) => state.auth.is_logged_in);
+  const loadingButton = useSelector((state) => state.auth.buttonLoading);
   const history = useHistory();
 
   const validate = Yup.object({
@@ -53,7 +51,7 @@ const Login = () => {
               {/* {isError && <p className="text-danger">{errMessage}</p>} */}
               <PrimaryButton
                 className="btn-dark mt-3"
-                isLoading={loading}
+                isLoading={loadingButton}
                 type="submit"
               >
                 Sign In
@@ -62,6 +60,8 @@ const Login = () => {
           </div>
         )}
       </Formik>
+      <br />
+      <Link to="/">Don't have an Account? Sign up here</Link>
     </Card>
   );
 };

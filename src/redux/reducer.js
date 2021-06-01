@@ -2,11 +2,13 @@ import {
   USER_SIGNIN,
   USER_SIGNIN_FAILURE,
   USER_SIGNIN_SUCCESS,
+  USER_SIGNUP_FAILURE,
   USER_SIGNOUT,
 } from "./type";
 
 const initialState = {
-  loading: false,
+  loading: true,
+  buttonLoading: false,
   is_logged_in: false,
   access_token: null,
   error: null,
@@ -17,7 +19,7 @@ const authReducer = (state = initialState, action) => {
     case USER_SIGNIN:
       return {
         ...state,
-        loading: true,
+        buttonLoading: true,
         error: null,
       };
     case USER_SIGNOUT:
@@ -31,6 +33,7 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
+        buttonLoading: false,
         is_logged_in: true,
         access_token: action.payload,
       };
@@ -38,9 +41,18 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
+        buttonLoading: false,
         is_logged_in: false,
         error: action.payload,
       };
+    case USER_SIGNUP_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        buttonLoading: false,
+        error: action.payload,
+      };
+
     default:
       return state;
   }

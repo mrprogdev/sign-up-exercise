@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { PrimaryButton } from "../components/UI/Button";
@@ -10,10 +8,8 @@ import Cookies from "js-cookie";
 
 const UserTable = () => {
   const [userList, setUserList] = useState([]);
-  const history = useHistory();
   const token = useSelector((state) => state.auth.access_token);
   const dispatch = useDispatch();
-  console.log("Your Token: ", token);
 
   const handleLogOut = () => {
     Cookies.remove("sessionid");
@@ -28,12 +24,12 @@ const UserTable = () => {
       .get(`/users`, { headers: { Authorization: AuthStr } })
       .then((response) => {
         setUserList(response.data.data);
-        console.log(response);
+        // console.log(response);
       })
       .catch((error) => {
-        console.log("error " + error);
+        // console.log("error " + error);
       });
-  }, []);
+  }, [token]);
 
   return (
     <div>

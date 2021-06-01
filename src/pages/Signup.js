@@ -1,36 +1,21 @@
 import { Formik, Form } from "formik";
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { TextField } from "../components/UI/TextField";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { Card } from "../components/UI/Card";
 import Button from "../components/UI/Button";
-import Cookies from "js-cookie";
-import { useHistory } from "react-router-dom";
-import api from "../common/axios";
-import UserTable from "./UserTable";
-import { checkSesssion } from "../redux/action";
+import { PrimaryButton } from "../components/UI/Button";
 import { useDispatch, useSelector } from "react-redux";
+import { userRegister } from "../redux/action";
 
-export const Signup = (props) => {
-  const [isPending, setIsPending] = useState(true);
-  const [isError, setIsError] = useState(false); // for message error if login unsuccessful
-  const [isErrorMessage, setIsErrorMessage] = useState(""); // for message error if login unsuccessful
-  const history = useHistory();
-  const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{7,}$/;
+export const Signup = () => {
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    // Will run on initial render or any dependencies inside array
-    console.log(Cookies.get("sessionid"));
-    dispatch(checkSesssion(Cookies.get("sessionid")));
-  }, []);
-
-  const HandleLogOut = () => {
-    Cookies.remove("token");
-    history.push("/login");
-  };
+  const errMessage = useSelector((state) => state.auth.error);
+  const loadingButton = useSelector((state) => state.auth.buttonLoading);
+  const [isSuccessMessage, setIsSuccessMessage] = useState("");
+  const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{7,}$/;
 
   const validate = Yup.object({
     name: Yup.string()
@@ -48,14 +33,6 @@ export const Signup = (props) => {
       .required("Confirm password is required"),
   });
 
-  if (props.isLoggedIn) {
-    return (
-      <div>
-        <UserTable />
-      </div>
-    );
-  }
-
   return (
     <Card>
       <Formik
@@ -67,25 +44,20 @@ export const Signup = (props) => {
         }}
         validationSchema={validate}
         onSubmit={(values) => {
-          console.log(values);
-          setIsPending(false);
-          setIsError(false);
-          api
-            .post("/register", values)
-            .then((response) => {
-              setIsPending(true);
-            })
-            .catch((error) => {
-              setIsError(true);
-              setIsPending(true);
-              setIsErrorMessage(error.response.data.error);
-            });
+          // console.log(values);
+          dispatch(userRegister(values)).then((response) => {
+            if (response) {
+              setIsSuccessMessage("Account Successfully created.");
+            }
+          });
         }}
       >
         {(formik) => (
           <div>
             <h1 className="my-4 font-weight-bold .display-4">Sign Up</h1>
-            {isError && <p className="text-danger">{isErrorMessage}</p>}
+            <p className="text-danger">{errMessage}</p>
+            {isSuccessMessage && <p>{isSuccessMessage}</p>}
+
             <Form>
               <TextField label="Name" name="name" type="text" />
               <TextField label="Email" name="email" type="text" />
@@ -96,15 +68,15 @@ export const Signup = (props) => {
                 type="text"
               />
 
-              <Button
+              <PrimaryButton
                 className="btn-dark mt-3"
-                isLoading={!isPending}
+                isLoading={loadingButton}
                 type="submit"
               >
                 Register
-              </Button>
+              </PrimaryButton>
 
-              {isPending && (
+              {!loadingButton && (
                 <Button className="btn-danger mt-3 ml-3" type="reset">
                   Reset
                 </Button>

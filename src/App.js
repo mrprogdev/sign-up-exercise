@@ -1,5 +1,4 @@
-import "./App.css";
-import logo from "./logo.svg";
+import "./App.scss";
 import Router from "./common/Router";
 
 function App() {
@@ -9,10 +8,6 @@ function App() {
         <div className="row">
           <div className="col-md-5">
             <Router />
-          </div>
-          <br />
-          <div className="col-md-7 my-auto">
-            <img src={logo} className="App-logo" alt="logo" />
           </div>
         </div>
       </div>

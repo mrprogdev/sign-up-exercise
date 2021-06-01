@@ -2,6 +2,7 @@ import {
   USER_SIGNIN,
   USER_SIGNIN_SUCCESS,
   USER_SIGNIN_FAILURE,
+  USER_SIGNUP_FAILURE,
   USER_SIGNOUT,
 } from "./type";
 import api from "../common/axios";
@@ -33,13 +34,20 @@ export const userSignInFailure = (error) => {
   };
 };
 
+export const userSignUpFailure = (error) => {
+  return {
+    type: USER_SIGNUP_FAILURE,
+    payload: error,
+  };
+};
+
 export const userLogin = (values) => {
   return (dispatch) => {
     dispatch(userSigningIn());
     return api
       .post(`/login`, values)
       .then((res) => {
-        console.log("values: ", values);
+        // console.log("values: ", values);
         const token = res.data.data.session;
         Cookies.set("sessionid", token, { expires: 1 });
         dispatch(userSignInSuccess(token));
@@ -53,17 +61,36 @@ export const userLogin = (values) => {
   };
 };
 
-export const checkSesssion = (sessionid) => {
-  const AuthStr = "Bearer " + sessionid;
+export const userRegister = (values) => {
+  return (dispatch) => {
+    dispatch(userSigningIn());
+    return api
+      .post(`/register`, values)
+      .then((res) => {
+        // console.log("values: ", values);
+
+        return true;
+      })
+      .catch((err) => {
+        const errorMessage = err.response.data.error;
+        dispatch(userSignInFailure(errorMessage));
+        return false;
+      });
+  };
+};
+
+export const checkSesssion = () => {
+  const AuthStr = "Bearer " + Cookies.get("sessionid");
   return (dispatch) => {
     api
       .get(`/account`, { headers: { Authorization: AuthStr } })
       .then((response) => {
-        console.log("Your Session: ", response);
-        dispatch(userSignInSuccess(sessionid));
+        // console.log("Your Session: ", response);
+        dispatch(userSignInSuccess(Cookies.get("sessionid")));
       })
       .catch((error) => {
-        console.log("error " + error);
+        // console.log("error " + error);
+        dispatch(userSignInFailure());
       });
   };
 };
