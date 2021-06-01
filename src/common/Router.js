@@ -4,7 +4,6 @@ import NotFound from "../pages/NotFound";
 import Login from "../pages/Login";
 import { Signup } from "../pages/Signup";
 import UserTable from "../pages/UserTable";
-import Cookies from "js-cookie";
 import { checkSesssion } from "../redux/action";
 import { useDispatch, useSelector } from "react-redux";
 

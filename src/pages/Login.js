@@ -47,7 +47,7 @@ const Login = () => {
             <Form>
               <TextField label="Email" name="email" type="text" />
               <TextField label="Password" name="password" type="text" />
-              <p className="text-danger">{errMessage}</p>
+              {errMessage && <p className="text-danger">{errMessage}</p>}
               {/* {isError && <p className="text-danger">{errMessage}</p>} */}
               <PrimaryButton
                 className="btn-dark mt-3"

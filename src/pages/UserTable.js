@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 import { PrimaryButton } from "../components/UI/Button";
 import api from "../common/axios";
 import { userSignOut } from "../redux/action";
-import Cookies from "js-cookie";
 
 const UserTable = () => {
   const [userList, setUserList] = useState([]);
@@ -12,7 +11,6 @@ const UserTable = () => {
   const dispatch = useDispatch();
 
   const handleLogOut = () => {
-    Cookies.remove("sessionid");
     dispatch(userSignOut());
   };
 

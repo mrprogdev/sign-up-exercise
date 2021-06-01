@@ -15,6 +15,8 @@ export const userSigningIn = () => {
 };
 
 export const userSignOut = () => {
+  Cookies.remove("sessionid");
+  api.defaults.headers = "";
   return {
     type: USER_SIGNOUT,
   };
@@ -54,6 +56,7 @@ export const userLogin = (values) => {
         return true;
       })
       .catch((err) => {
+        console.log("the error: ", err);
         const errorMessage = err.response.data.error;
         dispatch(userSignInFailure(errorMessage));
         return false;
